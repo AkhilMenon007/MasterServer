@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option csharp_namespace = "InventoryService.Protos";
+
+service InventoryManagement{
+	rpc DropItem (InventoryItem) returns (ReplyMessage);
+	rpc GetItem (DroppedItem) returns (ItemObtainedMessage);
+	rpc TradeItem (InventoryItem) returns (ItemObtainedMessage);
+}
+
+message DroppedItem{
+	uint32 itemType=1;
+	uint32 amount=2;
+}
+message ReplyMessage{
+	uint32 messageCode=1;
+}
+
+message ItemObtainedMessage{
+	ReplyMessage replyMessage=1;
+	Item itemInfo=2;
+} 
+message InventoryItem{
+	User owner=1;
+	Item item=2;
+}
+message Item{
+	uint32 itemIndex=1;
+	uint32 itemAmount=2;
+}
+message User{
+	uint32 userID=1;
+}

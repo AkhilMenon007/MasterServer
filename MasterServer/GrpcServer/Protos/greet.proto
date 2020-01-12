@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "LoginAPI.GameServer";
+
+package GameServer;
+
+service GameServerAuth {
+  rpc SayHello (UserReg) returns (ServerReply);
+}
+message UserReg{
+    string userID=1;
+    string sessionToken=2;
+}
+message ServerReply{
+    int32 replyMessage=1;
+}
