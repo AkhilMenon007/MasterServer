@@ -35,9 +35,4 @@ namespace DarkRiftHelpers
         }
     }
 
-
-    public class DarkriftHelpers
-    {
-
-    }
 }

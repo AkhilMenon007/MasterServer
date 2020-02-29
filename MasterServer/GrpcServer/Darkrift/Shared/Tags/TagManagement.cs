@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MasterServer.DarkRiftHelpers.Tags
+namespace MasterServer.DarkRift.Shared
 {
-    static class Tags
+    public static class TagManagement
     {
-        public static ushort playerServiceID = 0;
-        public static ushort masterServiceID = 1;
+        public const ushort playerServiceID = 0;
+        public const ushort masterServiceNoReply = 1;
+        public const ushort masterServiceReply = 2;
 
 
 

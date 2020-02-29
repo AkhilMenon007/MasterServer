@@ -9,17 +9,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
+    <Protobuf Include="..\..\..\UserServer\UserService\UserService\Protos\userService.proto" GrpcServices="Client">
+      <Link>Protos\userService.proto</Link>
+    </Protobuf>
     <Protobuf Include="Protos\Inventory.proto" GrpcServices="Client" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc" Version="2.26.0" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.26.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.26.0">
+    <PackageReference Include="Grpc" Version="2.27.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.27.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.27.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="SessionKeyManager" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +32,11 @@
     <Reference Include="DarkRift.Client">
       <HintPath>C:\Users\Drake\Desktop\DarkRift Server (.NET Framework)\Lib\DarkRift.Client.dll</HintPath>
     </Reference>
+    <Reference Include="SessionKeyManager">
+      <HintPath>..\..\..\LoginAPI\LoginAPI\SessionKeyManager\bin\Debug\netcoreapp3.1\SessionKeyManager.dll</HintPath>
+    </Reference>
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties configfiles_4serveraddresses_1json__JsonSchema="http://json-schema.org/draft-04/schema" /></VisualStudio></ProjectExtensions>
 
 </Project>
