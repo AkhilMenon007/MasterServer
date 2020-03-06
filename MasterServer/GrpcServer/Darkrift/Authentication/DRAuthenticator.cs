@@ -74,9 +74,8 @@ namespace MasterServer.DarkRift.Authentication
                     }
                     else 
                     {
-                        Console.WriteLine("Authentication Timed Out..");
                         authSuccessToken = null;
-                        return false;
+                        throw new DRAuthException("Authentication Timed Out..");
                     }
                 }
             }
@@ -91,13 +90,14 @@ namespace MasterServer.DarkRift.Authentication
             client.MessageReceived -= SendPassword;
             using(var message = e.GetMessage()) 
             {
-                using(var reader = message.GetReader()) 
+                using(var reader = message.GetReader().DecryptReaderAES(config.SecretKeyArray)) 
                 {
-                    var publicKey = Cryptography.StringToRsaKey(reader.ReadString());
+                    var publicKey = Convert.FromBase64String(reader.ReadString());
+                    var commonKey = reader.ReadString();
                     using(var writer = DarkRiftWriter.Create()) 
                     {
-                        writer.Write(config.SecretKey);
-                        using(var encryptedWriter = writer.EncryptWriterRSA(publicKey)) 
+                        writer.Write(commonKey);
+                        using(var encryptedWriter = writer.EncryptWriterAES(publicKey)) 
                         {
                             using(var reply = Message.Create((ushort)MasterServerNoReplyTags.Password, encryptedWriter)) 
                             {

@@ -1,10 +1,12 @@
-﻿using MasterServer.DarkRift;
+﻿using MasterServer.ClientShared;
+using MasterServer.ClientShared.Models;
+using MasterServer.DarkRift;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SessionKeyManager;
 using System;
 using System.Threading.Tasks;
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
 
 namespace MasterServer.Controllers
 {
@@ -18,13 +20,13 @@ namespace MasterServer.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtAuthenticationHelper.JwtAuthenticationScheme)]
-        [Route("secret")]
+        [Route(MasterServerRoutes.USER_LOGIN_ROUTE)]
         public async Task<IActionResult> Secret()
         {
             try
             {
                 var res = await clientManager.UserLoggedIn(HttpContext.GetUserIDFromJWTHeader());
-                return Ok(res);
+                return Ok(new ClientAuthResponse() { sessionToken = res});
             }
             catch(Exception e) 
             {

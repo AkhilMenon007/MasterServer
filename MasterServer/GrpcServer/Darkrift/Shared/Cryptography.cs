@@ -14,6 +14,27 @@ namespace MasterServer.DarkRift.Shared
 
     public static class Cryptography
     {
+        public static void GenerateDSAParameters(out DSAParameters privateKey,out DSAParameters publicKey) 
+        {
+            using (var csp = new DSACryptoServiceProvider(2048)) 
+            {
+                privateKey = csp.ExportParameters(true);
+                publicKey = csp.ExportParameters(false);
+            }
+        }
+        public static string DsaKeyToString(DSAParameters key) 
+        {
+            StringWriter sw = new StringWriter();
+            XmlSerializer xs = new XmlSerializer(typeof(DSAParameters));
+            xs.Serialize(sw, key);
+            return sw.ToString();
+        }
+        public static DSAParameters StringToDsaKey(string value)
+        {
+            StringReader sr = new StringReader(value);
+            XmlSerializer xs = new XmlSerializer(typeof(DSAParameters));
+            return (DSAParameters)xs.Deserialize(sr);
+        }
 
 
         public static byte[] GenerateAESKey()
@@ -31,6 +52,7 @@ namespace MasterServer.DarkRift.Shared
 
             privateKey = csp.ExportParameters(true);
             publicKey = csp.ExportParameters(false);
+            csp.Dispose();
         }
 
         public static string RsaKeyToString(RSAParameters key)
@@ -49,21 +71,23 @@ namespace MasterServer.DarkRift.Shared
             return (RSAParameters)xs.Deserialize(sr);
         }
 
-        public static DarkRiftWriter EncryptWriterAES(DarkRiftWriter writer, byte[] key)
+
+
+        public static DarkRiftWriter EncryptWriterAES(this DarkRiftWriter writer, byte[] key)
         {
             Message message = Message.Create(0, writer);
             DarkRiftReader reader = message.GetReader();
             byte[] data = reader.ReadRaw(reader.Length);
             data = Encrypt_Aes(data, key);
-            writer = DarkRiftWriter.Create();
-            writer.WriteRaw(data, 0, data.Length);
+            DarkRiftWriter _writer = DarkRiftWriter.Create();
+            _writer.WriteRaw(data, 0, data.Length);
 
             message.Dispose();
             reader.Dispose();
-            return writer;
+            return _writer;
         }
 
-        public static DarkRiftReader DecryptReaderAES(DarkRiftReader reader, byte[] key)
+        public static DarkRiftReader DecryptReaderAES(this DarkRiftReader reader, byte[] key)
         {
             byte[] data = reader.ReadRaw(reader.Length);
 
@@ -127,7 +151,9 @@ namespace MasterServer.DarkRift.Shared
             csp.ImportParameters(privateKey);
 
 
-            return csp.Decrypt(message, false);
+            var res = csp.Decrypt(message, false);
+            csp.Dispose();
+            return res;
         }
 
         private static byte[] EncryptRSA(byte[] message, RSAParameters publicKey)
@@ -135,6 +161,7 @@ namespace MasterServer.DarkRift.Shared
             RSACryptoServiceProvider csp = new RSACryptoServiceProvider(2048);
             csp.ImportParameters(publicKey);
             byte[] encrypted = csp.Encrypt(message, false);
+            csp.Dispose();
             return encrypted;
         }
 

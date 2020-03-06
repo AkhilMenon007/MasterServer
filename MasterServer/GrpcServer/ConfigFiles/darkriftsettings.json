@@ -1,7 +1,7 @@
 {
   "DarkRiftServer": {
     "IP": "127.0.0.1:4296",
-    "SecretKey": "YAREYAREDAZE!",
+    "SecretKey": "Tpu3pHh5/dXrZZaghUwcz7kxEiVO1yuNHrDC7bu2J4A=",
     "AuthRequestTries": "10",
     "AuthRequestDelay": "30000"
   }

@@ -1,14 +1,11 @@
 ﻿using DarkRift;
 using DarkRift.Client;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Security.Cryptography;
 using MasterServer.Config;
 using MasterServer.DarkRift.Shared;
-using MasterServer.Darkrift.Shared;
 using MasterServer.Darkrift;
 
 namespace MasterServer.DarkRift
@@ -19,21 +16,20 @@ namespace MasterServer.DarkRift
         /// The messages from game server to the master server will be working on request reply protocol like fashion
         /// When a message is sent it will have a message id value associated with it, which the server echoes back.
         /// </summary>
-        private readonly Dictionary<ushort,TaskCompletionSource<byte[]>> waitingOnReply;
+        private readonly Dictionary<ushort,TaskCompletionSource<byte[]>> waitingOnReply = 
+            new Dictionary<ushort, TaskCompletionSource<byte[]>>();
 
         /// <summary>
         /// The Amount of messages sent, can also be used as the id of next message to be sent
         /// </summary>
         private int messageCount = 0;
+        public DRClientHelper helper { get; }
 
-        public DarkRiftClient Client { get; private set; }
+        private DarkRiftClient Client => helper.GetDarkriftClient();
 
-
-
-        public DRCommunicator(DRClientHelper helper,DarkRiftServerConfig config)
+        public DRCommunicator(DRClientHelper helper)
         {
-            Client = helper.GetDarkriftClient();
-            waitingOnReply = new Dictionary<ushort, TaskCompletionSource<byte[]>>();
+            this.helper = helper;
 
             Init();
         }
@@ -81,11 +77,13 @@ namespace MasterServer.DarkRift
 
                 Task.WaitAny(Task.Delay(100000),token.Task);
                 waitingOnReply.Remove(messID);
-                if (token.Task.IsCompletedSuccessfully) 
+                if (token.Task.IsCompletedSuccessfully)
                 {
-                    return DarkRiftExtensions.ReadBytesOfSerializable<U>(token.Task.Result);
+                    if (token.Task.Result.Length != 0)
+                    {
+                        return DarkRiftExtensions.ReadBytesOfSerializable<U>(token.Task.Result);
+                    }
                 }
-
                 return default;
             }
         }

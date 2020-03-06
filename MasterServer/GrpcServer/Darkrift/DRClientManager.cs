@@ -36,6 +36,12 @@ namespace MasterServer.DarkRift
             var client = new UserService.Protos.UserManagement.UserManagementClient(channel);
             var res = await client.GetLoggedInUserAsync(new UserService.Protos.UserInfo { UserID = userID });
 
+            if(string.IsNullOrEmpty(res.CharID)) 
+            {
+                System.Console.WriteLine("Failed to get logged in character from user server..");
+                return 0;
+            }
+
             var response = await communicator.SendMessageWithReply<ServerCharData,ServerAuthReply>(new ServerCharData {charID = res.CharID,jsonData = res.CharData }, (ushort)MasterServerReplyTags.CharacterLoggedIn);
             return response.sessToken;
         }
