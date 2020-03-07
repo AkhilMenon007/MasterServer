@@ -25,7 +25,6 @@ namespace MasterServer.DarkRift
         private int messageCount = 0;
         public DRClientHelper helper { get; }
 
-        private DarkRiftClient Client => helper.GetDarkriftClient();
 
         public DRCommunicator(DRClientHelper helper)
         {
@@ -37,7 +36,7 @@ namespace MasterServer.DarkRift
         private void Init()
         {
             Console.WriteLine("Connecting to server");
-            Client.MessageReceived += SignalReply;
+            helper.OnClientMessageReceived += SignalReply;
         }
 
         private ushort GetMessageID()
@@ -57,6 +56,11 @@ namespace MasterServer.DarkRift
 
         public async Task<U> SendMessageWithReply<T, U>(T serializable, ushort tag) where T : IDarkRiftSerializable, new() where U : IDarkRiftSerializable, new()
         {
+            var client = await helper.GetDarkriftClient();
+            if (client == null)
+            {
+                return default;
+            }
             using (var writer = DarkRiftWriter.Create())
             {
                 ushort messID = GetMessageID();
@@ -68,7 +72,7 @@ namespace MasterServer.DarkRift
                 using (var message = Message.Create(tag, writer))
                 {
                     Console.WriteLine("Sending message to DR2 Server..");
-                    Client.SendMessage(message, SendMode.Reliable);
+                    client.SendMessage(message, SendMode.Reliable);
                 }
                 waitingOnReply.Add(messID, token);
                 Console.WriteLine("Sent message waiting on Reply..");

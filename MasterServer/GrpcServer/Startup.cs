@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using SessionKeyManager;
 using System.IO;
 using MasterServer.Config;
-using MasterServer.DarkRift.Authentication;
 
 namespace MasterServer
 {
@@ -48,7 +47,6 @@ namespace MasterServer
             services.AddSingleton(Configuration.GetSection("DarkRiftServer").Get<DarkRiftServerConfig>());
             services.AddSingleton(Configuration.GetSection("ServerAddresses").Get<ServerAddresses>());
             services.AddSingleton<DRClientManager>();
-            services.AddSingleton<DRAuthenticator>();
             services.AddSingleton<DRClientHelper>();
             services.AddSingleton<DRCommunicator>();
         }
