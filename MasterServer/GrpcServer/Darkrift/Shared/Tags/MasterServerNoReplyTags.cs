@@ -10,6 +10,7 @@ namespace MasterServer.DarkRift.Shared
         AuthRequest = TagManagement.masterServiceNoReply<<8,
         PublicKey,
         Password,
-        Acknowledge
+        Acknowledge,
+        SaveCharacterData
     }
 }
